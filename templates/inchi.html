@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block body %}
+<td align="top"> <!-- to go to the info box -->
+    <h2>Results for InChI: {{inchi}}</h2>
+
+    {% if matches.gissmo_ids %}
+    <h2>GISSMO Matches:</h2>
+    {% for id in matches.gissmo_ids %}
+    <p><a href="http://gissmo.nmrfam.wisc.edu/entry/{{id}}">{{id}}</a></p>
+    {% endfor %}
+    {% endif %}
+
+    {% if matches.alatis_ids %}
+    <h2>ALATIS Matches:</h2>
+    {% for id in matches.alatis_ids %}
+    <p><a href="http://alatis.nmrfam.wisc.edu/pubchem/{{id}}">PubChem {{id}}</a></p>
+    {% endfor %}
+    {% endif %}
+
+    {% if matches.camp_ids %}
+    <h2>CAMP Matches:</h2>
+    {% for id in matches.camp_ids %}
+    <p><a href="http://dashti.nmrfam.wisc.edu/camp/query?term={{id}}">{{id}}</a></p>
+    {% endfor %}
+    {% endif %}
+
+
+</td> <!-- to go to the info box -->
+{% endblock %}

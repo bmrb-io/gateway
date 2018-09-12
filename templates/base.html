@@ -4,58 +4,10 @@
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
         <link rel="stylesheet" href="//code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css">
-        <link rel="stylesheet" href="http://alatis.nmrfam.wisc.edu/css">
 
         <title>{{ title }}</title>
-    <script type="text/javascript" src="http://alatis.nmrfam.wisc.edu/static/jsmol/JSmol.min.nojq.js"></script>
-    <script type="text/javascript">
-        var jmolApplet0; // set up in HTML table, below
 
-        // logic is set by indicating order of USE -- default is HTML5
-        var use = "HTML5"
-        var s = document.location.search;
-
-        Jmol.debugCode = (s.indexOf("debugcode") >= 0);
-
-        if (s.indexOf("USE=") >= 0)
-          use = s.split("USE=")[1].split("&")[0]
-        else if (s.indexOf("JAVA") >= 0)
-          use = "JAVA"
-        else if (s.indexOf("IMAGE") >= 0)
-          use = "IMAGE"
-        else if (s.indexOf("NOWEBGL") >= 0)
-          use = "JAVA IMAGE"
-        else if (s.indexOf("WEBGL") >= 0)
-          use = "WEBGL HTML5"
-        if (s.indexOf("NOWEBGL") >= 0)
-          use = use.replace(/WEBGL/,"")
-        var useSignedApplet = (s.indexOf("SIGNED") >= 0);
-
-        jmol_isReady = function(applet) {}
-
-        var Info = {
-        width: 400,
-        height: 400,
-        debug: false,
-        color: "#C0C0C0",
-        addSelectionOptions: false,
-        serverURL: "http://alatis.nmrfam.wisc.edu/static/jsmol/php/jsmol.php",
-        use: use,
-        jarPath: "http://alatis.nmrfam.wisc.edu/static/jsmol/",
-        j2sPath: "http://alatis.nmrfam.wisc.edu/static/jsmol/j2s",
-        jarFile: (useSignedApplet ?
-    "http://alatis.nmrfam.wisc.edu/static/jsmol/jsmol/JmolAppletSigned.jar" :
-    "JmolApplet.jar"),
-        isSigned: useSignedApplet,
-        readyFunction: jmol_isReady,
-        boxfgcolor: "#FFFFF0",
-        boxbgcolor: "#FFFFF0",
-        script: "set antialiasDisplay;"
-        }
-    </script>
-
-    {% block headextra %}
-        {% endblock %}
+    {% block headextra %} {% endblock %}
 
     </head>
     <body>
@@ -69,19 +21,21 @@
         <a href="http://alatis.nmrfam.wisc.edu/databases">Analyzed databases</a><br>
         <a href="http://pine.nmrfam.wisc.edu/web_servers.html" target="_blank">NMRFAM Servers</a><br>
 
-        <!-- Instant search bar -->
+        <!-- Instant search bar
         <div class="search">
-                    <form method="get" action="/search/results" target="_blank">
-                        <p><span style="font-weight: bold;">Search:</span>
-                            <input type="text" id="search" name="term" title="Search">
-                        </p>
-                   </form>
-                </div>
-
-	<font color="blue"><b>News:</b></font>
-	<ul>
-		<li><b>Aug 2018</b>: Initiation.</li>
-	</ul>
+            <form method="get" action="/search/results" target="_blank">
+                <p><span style="font-weight: bold;">Search:</span>
+                    <input type="text" id="search" name="term" title="Search">
+                </p>
+           </form>
+        </div>-->
+        <br>
+        <div>
+            <font color="blue"><b>News:</b></font>
+            <ul>
+                <li><b>Aug 2018</b>: Initiation.</li>
+            </ul>
+        </div>
     </td>
 
     {% block body %}{% endblock %}
