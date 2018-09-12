@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
+        <script async type="text/javascript" src="/js"></script>
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="/css">
+
+        <title>{{ title }}</title>
+    </head>
+    <body>
+
+<table border="1">
+<tr><td width="15%" align="center"><img src="http://alatis.nmrfam.wisc.edu/static/logo1_nmrfam.png" alt="ALATIS Logo" style="width:50%"></td><td align="center"><img src="http://alatis.nmrfam.wisc.edu/static/logo.jpg" alt="ALATIS Logo" style="width:40%"><br><font size="5">Atom Label Assignment Tool using InChI String</font></td></tr>
+
+<tr>
+    <td width="15%" valign="top">
+        <a class="active" href="http://alatis.nmrfam.wisc.edu/">Home</a><br>
+        <a href="http://alatis.nmrfam.wisc.edu/examples">Processed databases</a><br>
+        <a href="http://pine.nmrfam.wisc.edu/web_servers.html" target="_blank">NMRFAM Servers</a><br>
+
+        <!-- Instant search bar -->
+        <div class="search">
+                    <form method="get" action="/search/results" target="_blank">
+                        <p><span style="font-weight: bold;">Search:</span>
+                            <input type="text" id="search" name="term" title="Search">
+                        </p>
+                   </form>
+                </div>
+
+
+    </td>
+    <td valign="top">
+
+        <div style="margin-left: .5em; margin-right: .5em">
+            {% if results|length > 0 %}
+            <table style="width: 85%;">
+                <thead>
+                    <tr>
+                        <th align="left">Database</th>
+                        <th align="left">ID</th>
+                        <th align="left">Matching Type</th>
+                        <th align="left">Matching Value</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in results %}
+                    <tr>
+                        <td>{{ item.db }}</td>
+                        <td><a href="../{{ item.link }}">{{ item.entry }}</a></td>
+                        <td>{{ item.termname }}</td>
+                        <td>{{ item.term }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <h1>No results!</h1>
+            {% endif %}
+            <!--- <p><a href="/">Return to home page</a></p> --->
+            <br><br><br><br><br><br><br><br><br><br>
+        </div>
+</td>
+</tr>
+
+<tr> <td colspan="2" align="left">
+    <fieldset>
+    <legend><b><font size="5">Citation: </font></b></legend>
+    <ul>
+        <li> Hesam Dashti, William M. Westler, John L. Markley, Hamid R. Eghbalnia, "<b>Unique identifiers for small molecules enable rigorous labeling of their atoms</b>", Scientific Data 4, Article number: 170073 (2017), doi:10.1038/sdata.2017.73, <a href="https://www.nature.com/articles/sdata201773" target="_blank">https://www.nature.com/articles/sdata201773</a></li>
+        </ul>
+    </fieldset>
+
+    <fieldset>
+    <legend><b><font size="5">Disclaimer: </font></b></legend>
+    <ul>
+        <li>
+            ALATIS is available to the public as a web-service via our <a href="http://alatis.nmrfam.wisc.edu/" target="_blank">web-server</a>,
+            and also through the <a href="https://nmrbox.org/" target="_blank">NMRBox virtual machine</a>. The custom source code, developed using the academic license of MATLAB® in the
+            Linux environment (MATLAB® 2016a for CentOS 6.5). This work is copyrighted under the terms of GPL. The web-service and the source codes are provided on an “as is” basis without
+            warranty of any kind, either expressed or implied. Any usage of the web-server, or modification and application of the source codes are free for academic use when ALATIS publication
+            is cited.
+        </li>
+        <li>
+            The input/output file formats to ALATIS are Mol V2000 and its corresponding SDF. Other acceptable input/output file formats of this website are provided by utilizing
+            the Open Babel <a href="http://openbabel.org/">(The Open Source Chemistry Toolbox)</a> software package, please comply with the Open Babel license agreements.
+        </li>
+        </ul>
+    </fieldset>
+
+    <fieldset>
+    <legend><b><font size="5">Contact: </font></b></legend>
+    <ul>
+        <div>For any question or concern please contact <b>Hesam Dashti (dashti@wisc.edu)</b>.</div>
+        </ul>
+    </fieldset>
+
+
+</td></tr>
+<tr> <td colspan="2" align="center"><a href="http://info.flagcounter.com/rqlt"><img src="http://s09.flagcounter.com/count2/rqlt/bg_FFFFFF/txt_000000/border_CCCCCC/columns_2/maxflags_10/viewers_0/labels_0/pageviews_0/flags_0/percent_0/" alt="Free counters!" border="0"></a><br><br></td></tr>
+</table>
+</body>
+</html>
+
+
+
+
+
+    </body>
+</html>
