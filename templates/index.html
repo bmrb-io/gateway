@@ -1,62 +1,66 @@
 {% extends "base.html" %}
 {% block body %}
-<td align="top"> <!-- to go to the info box -->
-                <form action="upload" method="post" enctype="multipart/form-data" target="_blank">
-        <div id="query" class="section">
-            <fieldset>
-            <legend><b><font color="green" size="5">1. Input structure format </font></b></legend>
-            <ul>
-                <label class="m"><i>Specify input format:</i></label>
-                <div class="input">
-                    <select id="FORMAT" name="FORMAT" size="1">
-                    <option value="mol">Mol v2000 (*.mol)</option>
-                    <option value="sdf">SDF MDL (*.sdf)</option>
-                    <option value="pdb">PDB (*.pdb)</option>
-                    <option value="cdx">CDX (*.cdx)</option>
-                    </select>
-                </div>
-            </ul>
-            </fieldset>
-        </div>
 
-        <div id="query" class="section">
-            <fieldset>
+<form action="upload" method="post" enctype="multipart/form-data" target="_blank">
+
+    <div class="input-field">
+        <fieldset>
+            <legend><b><font color="green" size="5">1. Input structure format </font></b></legend>
+            <select id="FORMAT" name="FORMAT">
+                <option value="" disabled selected>Choose the file type</option>
+                <option value="mol">Mol v2000 (*.mol)</option>
+                <option value="sdf">SDF MDL (*.sdf)</option>
+                <option value="pdb">PDB (*.pdb)</option>
+                <option value="cdx">CDX (*.cdx)</option>
+            </select>
+        </fieldset>
+    </div>
+
+    <div class="section">
+        <fieldset>
             <legend><b><font color="green" size="5">2. Auxiliary options</font> </b></legend>
-            <ul>
-                <ul>
-                    <label class="m"><i><b>a.</b> If the input structure is a 2D structure, you can check this box to get a 3D project of the structure:</i></label>
-                    <div class="input">
-                            &nbsp;  &nbsp;<label for="proj2to3"><b>Generate 3D structure</b></label><input type="checkbox" id="proj2to3" name="proj2to3" unchecked>
-                    </div>
-                    <label class="m"><i><b>b.</b> If hydrogen atoms are missing from the structure, you can check this box to add hydrogen atoms:</i></label>
-                    <div class="input">
-                            &nbsp;  &nbsp;<label for="addHydr"><b>Add hydrogen atoms</b></label><input type="checkbox" id="addHydr" name="addHydr"  unchecked>
-                    </div>
-                                </ul>
-                        </ul>
-            </fieldset>
-        </div>
-        <div id="query" class="section">
-            <fieldset>
+                <p>If the input structure is a 2D structure, you can check this box to get a 3D project of the structure:</p>
+                <p>
+                    <label class="black-text">
+                        <input type="checkbox" class="filled-in" id="proj2to3" name="proj2to3">
+                        <span>Generate 3D structure</span>
+                    </label>
+                </p>
+                <p>If hydrogen atoms are missing from the structure, you can check this box to add hydrogen atoms:</p>
+                <p>
+                    <label class="black-text">
+                        <input type="checkbox" class="filled-in" id="addHydr" name="addHydr">
+                        <span>Add hydrogen atoms</span>
+                    </label>
+                </p>
+        </fieldset>
+    </div>
+    <div class="section">
+        <fieldset>
             <legend><b><font color="green" size="5">3. Upload or paste input structure</font></b></legend>
-            <ul>
-                <label class="m"><i><b></b> upload a structure file (one compounds per submit): </i></label>
-                <div class="input">
-                        &nbsp;  &nbsp;<input type="file" name="infile" id="infile"/>
-                </div>
-                <label class="m"><i><b>OR</b> paste a structure:</i><font color="red">(if a file has been uploaded we process the uploaded file)</font></label>
-                <div class="input">
-                        &nbsp;  &nbsp;<textarea name="inputtext" id="inputtext" style="width: 50%;height: 250px;"></textarea><br>
-                </div>
-                        </ul>
-            </fieldset>
-        </div>
+            <p>Upload a structure file (one compound per submit):</p>
+
+            <div class="file-field input-field">
+              <div class="btn">
+                <span>File</span>
+                <input type="file" name="infile" id="infile" accept=".mol,.sdf,.pdb,.cdx">
+              </div>
+              <div class="file-path-wrapper">
+                <input class="file-path validate" type="text">
+              </div>
+            </div>
+            <p><b>OR</b> Paste a structure <font color="red">(if a file has been uploaded we process the uploaded file)</font></p>
+            <div class="input-field col s12">
+              <textarea name="inputtext" id="inputtext" class="materialize-textarea"></textarea>
+              <label for="inputtext">Paste your structure here</label>
+            </div>
+        </fieldset>
+    </div>
     <fieldset>
         <legend><b><font color="green" size="5">4. Submit</font></b></legend>
-        <ul>
-        <p align="center"><input type="submit" value="Submit" style="height:50px; width:250px"></p>
-                </ul>
+          <button class="btn waves-effect waves-light" type="submit" value="Submit">Submit
+            <i class="material-icons right">send</i>
+          </button>
     </fieldset>
-        </form>
-</td> <!-- to go to the info box -->
+</form>
 {% endblock %}

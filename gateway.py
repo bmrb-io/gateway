@@ -4,15 +4,12 @@
 
 from __future__ import print_function
 
-# Standard imports
-import os
-
 # Installed packages
 import requests
 import psycopg2
 from psycopg2.extras import DictCursor
 
-from flask import Flask, request, Response, jsonify, redirect, send_file, render_template, send_from_directory, url_for
+from flask import Flask, request, jsonify, redirect, render_template, url_for
 
 # Set up the flask application
 application = Flask(__name__)
@@ -64,6 +61,9 @@ def upload_file():
     r = requests.post(application.config['ALATIS_API_URL'], data=data)
     json_result = r.json()
 
+    if not 'inchi' in json_result:
+        return render_template('error.html', error=json_result['error'])
+
     return redirect(url_for('inchi_search', inchi=json_result['inchi']))
 
 
@@ -74,8 +74,12 @@ def inchi_search(inchi):
     cur = get_postgres_connection(dictionary_cursor=True)[1]
     cur.execute('SELECT * FROM dci.db_links where inchi=%s', [inchi])
     result = cur.fetchone()
+    cur.execute('SELECT unnest(name) FROM dci.names where inchi=%s', [inchi])
+    unique_names = set()
+    for name in cur.fetchall():
+        unique_names.add(name[0])
 
-    return render_template('inchi.html', inchi=inchi, matches=result)
+    return render_template('inchi.html', inchi=inchi, matches=result, names=list(unique_names))
 
 
 @application.route('/')
@@ -184,6 +188,24 @@ FROM dci.inchi_index AS d
  LEFT JOIN gissmo.entries AS g ON g.inchi=d.inchi
  LEFT JOIN camp.camp AS c ON c.inchi=d.inchi
 GROUP BY d.inchi;
+
+DROP VIEW IF EXISTS dci.names;
+CREATE VIEW dci.names AS
+select inchi, array_agg(name) as name FROM
+(SELECT ii.inchi, cn.name
+ FROM dci.inchi_index as ii
+   LEFT JOIN alatis.compound_alatis as ca on ii.inchi=ca.inchi
+   LEFT JOIN alatis.compound_name as cn on ca.id=cn.id
+UNION ALL
+SELECT ii.inchi, g.name
+ FROM dci.inchi_index as ii
+   LEFT JOIN gissmo.entries as g on ii.inchi=g.inchi
+UNION ALL
+SELECT ii.inchi, unnest(c.name) as name
+ FROM dci.inchi_index as ii
+   LEFT JOIN camp.camp as c ON ii.inchi=c.inchi) as why
+GROUP BY inchi;
+
 GRANT USAGE ON SCHEMA dci TO web;
 GRANT SELECT ON ALL TABLES IN SCHEMA dci TO web;
 ''')

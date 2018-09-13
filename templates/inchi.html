@@ -1,29 +1,63 @@
 {% extends "base.html" %}
 {% block body %}
-<td align="top"> <!-- to go to the info box -->
-    <h2>Results for InChI: {{inchi}}</h2>
 
-    {% if matches.gissmo_ids %}
-    <h2>GISSMO Matches:</h2>
-    {% for id in matches.gissmo_ids %}
-    <p><a href="http://gissmo.nmrfam.wisc.edu/entry/{{id}}">{{id}}</a></p>
-    {% endfor %}
-    {% endif %}
+<h3>Database Records</h3>
+<p>For {{inchi}}</p>
+
+
+  <div class="card">
+    <div class="card-content">
+      <span class="card-title activator grey-text text-darken-4">Click to view more names<i class="material-icons right">more_vert</i></span>
+        <p>Name: {{names[0]}}</p>
+    </div>
+    <div class="card-reveal">
+      <span class="card-title grey-text text-darken-4">Compound Names<i class="material-icons right">close</i></span>
+      {% for name in names %}
+        <p>{{name}}</p>
+        {% endfor %}
+    </div>
+  </div>
+
 
     {% if matches.alatis_ids %}
-    <h2>ALATIS Matches:</h2>
-    {% for id in matches.alatis_ids %}
-    <p><a href="http://alatis.nmrfam.wisc.edu/pubchem/{{id}}">PubChem {{id}}</a></p>
-    {% endfor %}
+    <div class="card blue-grey darken-1">
+        <div class="card-content white-text">
+            <span class="card-title">ALATIS Entries</span>
+            <p>Unique identifiers for small molecules enable rigorous labeling of their atoms</p>
+        </div>
+        <div class="card-action">
+            {% for id in matches.alatis_ids %}
+            <a href="http://alatis.nmrfam.wisc.edu/pubchem/{{id}}" target="_blank">PubChem {{id}}</a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    {% if matches.gissmo_ids %}
+    <div class="card blue-grey darken-1">
+        <div class="card-content white-text">
+            <span class="card-title">GISSMO Entries</span>
+            <p>GISSMO enables the efficient calculation and refinement of spin system matrices (chemical shift and coupling constants) against experimental 1D-1H NMR spectra of small molecules.</p>
+        </div>
+        <div class="card-action">
+            {% for id in matches.gissmo_ids %}
+            <a href="http://gissmo.nmrfam.wisc.edu/entry/{{id}}" target="_blank">{{id}}</a>
+            {% endfor %}
+        </div>
+    </div>
     {% endif %}
 
     {% if matches.camp_ids %}
-    <h2>CAMP Matches:</h2>
-    {% for id in matches.camp_ids %}
-    <p><a href="http://dashti.nmrfam.wisc.edu/camp/query?term={{id}}">{{id}}</a></p>
-    {% endfor %}
+    <div class="card blue-grey darken-1">
+        <div class="card-content white-text">
+            <span class="card-title">CAMP Entries</span>
+            <p>CAMP is a database of ...</p>
+        </div>
+        <div class="card-action">
+            {% for id in matches.camp_ids %}
+            <a href="http://dashti.nmrfam.wisc.edu/camp/entry/{{id}}" target="_blank">{{id}}</a>
+            {% endfor %}
+        </div>
+    </div>
     {% endif %}
-
-
-</td> <!-- to go to the info box -->
 {% endblock %}

@@ -1,77 +1,95 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <!--
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
         <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css">
+        <link rel="stylesheet" href="//code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css">-->
+
+        <!--Import Google Icon Font-->
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <!--Import materialize.css-->
+        <link rel="stylesheet" href="/static/materialize.min.css">
+        <!--Let browser know website is optimized for mobile-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
         <title>{{ title }}</title>
 
     {% block headextra %} {% endblock %}
-
     </head>
     <body>
 
-<table border="1">
-<tr><td width="15%" align="center"><img src="http://alatis.nmrfam.wisc.edu/static/logo1_nmrfam.png" alt="ALATIS Logo" style="width:50%"></td><td align="center"><font size="5">Gateway to the Universe of Small Molecules</font></td></tr>
+<div>
+    <!-- Page Content goes here -->
+    <main>
+        <div class="row">
 
-<tr>
-    <td width="15%" valign="top">
-        <a class="active" href="http://alatis.nmrfam.wisc.edu/">Home</a><br>
-        <a href="http://alatis.nmrfam.wisc.edu/databases">Analyzed databases</a><br>
-        <a href="http://pine.nmrfam.wisc.edu/web_servers.html" target="_blank">NMRFAM Servers</a><br>
+            <nav>
+                <div class="nav-wrapper blue">
+                    <span class="brand-logo black-text">Gateway to the Universe of Small Molecules</span>
+                    <ul id="nav-mobile" class="right hide-on-med-and-down">
+                        <li><a class="black-text" href="{{url_for('home_page')}}">Home</a></li>
+                        <li><a class="black-text" href="http://pine.nmrfam.wisc.edu/web_servers.html" target="_blank">NMRFAM Servers</a></li>
+                    </ul>
+                </div>
+            </nav>
 
-        <!-- Instant search bar
-        <div class="search">
-            <form method="get" action="/search/results" target="_blank">
-                <p><span style="font-weight: bold;">Search:</span>
-                    <input type="text" id="search" name="term" title="Search">
-                </p>
-           </form>
-        </div>-->
-        <br>
-        <div>
-            <font color="blue"><b>News:</b></font>
-            <ul>
-                <li><b>Aug 2018</b>: Initiation.</li>
-            </ul>
+            <div class="col s3">
+                <!-- Instant search bar
+                <div class="search">
+                    <form method="get" action="/search/results" target="_blank">
+                        <p><span style="font-weight: bold;">Search:</span>
+                            <input type="text" id="search" name="term" title="Search">
+                        </p>
+                   </form>
+                </div>-->
+                <div class="card blue">
+                    <div class="card-content">
+                        <span class="card-title">News</span>
+                        <ul>
+                            <li><b>Aug 2018</b>: Initiation.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col s9">
+                {% block body %}{% endblock %}
+            </div>
         </div>
-    </td>
+    </main>
 
-    {% block body %}{% endblock %}
+    <footer class="page-footer blue">
+      <div class="container">
+        <div class="row">
+          <div class="col l6 s12">
+            <h5 class="black-text">Citation Information</h5>
+            <p class="black-text">In progress...</p>
+          </div>
+          <div class="col l4 offset-l2 s12">
+            <h5 class="black-text">Other Servers</h5>
+            <ul>
+              <li><a class="black-text" href="//gissmo.nmrfam.wisc.edu">GISSMO Server</a></li>
+              <li><a class="black-text" href="//alatis.nmrfam.wisc.edu">ALATIS Server</a></li>
+              <li><a class="black-text" href="//dashti.nmrfam.wisc.edu/camp/">CAMP Server</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="container black-text">© 2018 NMRFAM
+            <a class="black-text right" href="mailto:dashti@wisc.edu?subject=Feedback on Gateway">Contact</a>
+        </div>
+      </div>
+    </footer>
 
-</tr>
-
-<tr> <td colspan="2" align="left">
-	<!--
-    <fieldset>
-    <legend><b><font size="5">Disclaimer: </font></b></legend>
-    <ul>
-        <li>
-            ALATIS is available to the public as a web-service via our <a href="http://alatis.nmrfam.wisc.edu/" target="_blank">web-server</a>,
-            and also through the <a href="https://nmrbox.org/" target="_blank">NMRBox virtual machine</a>. The custom source code, developed using the academic license of MATLAB® in the
-            Linux environment (MATLAB® 2016a for CentOS 6.5). This work is copyrighted under the terms of GPL. The web-service and the source codes are provided on an “as is” basis without
-            warranty of any kind, either expressed or implied. Any usage of the web-server, or modification and application of the source codes are free for academic use when ALATIS publication
-            is cited.
-        </li>
-        <li>
-            The input/output file formats to ALATIS are Mol V2000 and its corresponding SDF. Other acceptable input/output file formats of this website are provided by utilizing
-            the Open Babel <a href="http://openbabel.org/">(The Open Source Chemistry Toolbox)</a> software package, please comply with the Open Babel license agreements.
-        </li>
-        </ul>
-    </fieldset>
-
-    <fieldset>
-    <legend><b><font size="5">Contact: </font></b></legend>
-    <ul>
-        <div>For any question or concern please contact <b>Hesam Dashti (dashti@wisc.edu)</b>.</div>
-        </ul>
-    </fieldset>
-	-->
-
-</td></tr>
-</table>
-<script type="text/javascript" src="/js"></script>
+</div>
+<script type="text/javascript" src="/static/materialize.min.js"></script>
+<script>document.addEventListener('DOMContentLoaded', function() {
+var elems = document.querySelectorAll('select');
+var instances = M.FormSelect.init(elems, 'options');
+});
+</script>
 </body>
 </html>
 
