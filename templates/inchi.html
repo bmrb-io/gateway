@@ -7,11 +7,11 @@
 
   <div class="card">
     <div class="card-content">
-      <span class="card-title activator grey-text text-darken-4">Click to view more names<i class="material-icons right">more_vert</i></span>
+      <span class="card-title activator black-text">Click to view more names<i class="material-icons right">more_vert</i></span>
         <p>Name: {{names[0]}}</p>
     </div>
     <div class="card-reveal">
-      <span class="card-title grey-text text-darken-4">Compound Names<i class="material-icons right">close</i></span>
+      <span class="card-title black-text">Compound Names<i class="material-icons right">close</i></span>
       {% for name in names %}
         <p>{{name}}</p>
         {% endfor %}
@@ -20,8 +20,8 @@
 
 
     {% if matches.alatis_ids %}
-    <div class="card blue-grey darken-1">
-        <div class="card-content white-text">
+    <div class="card indigo lighten-1">
+        <div class="card-content black-text">
             <span class="card-title">ALATIS Entries</span>
             <p>Unique identifiers for small molecules enable rigorous labeling of their atoms</p>
         </div>
@@ -34,8 +34,8 @@
     {% endif %}
 
     {% if matches.gissmo_ids %}
-    <div class="card blue-grey darken-1">
-        <div class="card-content white-text">
+    <div class="card indigo lighten-1">
+        <div class="card-content black-text">
             <span class="card-title">GISSMO Entries</span>
             <p>GISSMO enables the efficient calculation and refinement of spin system matrices (chemical shift and coupling constants) against experimental 1D-1H NMR spectra of small molecules</p>
         </div>
@@ -48,8 +48,8 @@
     {% endif %}
 
     {% if matches.camp_ids %}
-    <div class="card blue-grey darken-1">
-        <div class="card-content white-text">
+    <div class="card indigo lighten-1">
+        <div class="card-content black-text">
             <span class="card-title">CAMP Entries</span>
             <p>CAMP is a webserver for computational mapping of MS peaks of a given small molecule to all possible fragments of the compound</p>
         </div>

@@ -83,9 +83,17 @@ def inchi_search(inchi):
 
 
 @application.route('/')
+@application.route('/structure_search')
 def home_page():
-    """ Reroute to home page."""
-    return render_template("index.html")
+    """ Render the home page."""
+    return render_template("search_by_structure.html")
+
+
+@application.route('/chemical_identifier_search')
+def identifier_search():
+    """ Search for a compound by chemical identifier. """
+
+    return render_template("search_by_inchi_smiles.html")
 
 
 @application.route('/search')

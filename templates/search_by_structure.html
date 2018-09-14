@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block body %}
+
+<form action="upload" method="post" enctype="multipart/form-data" target="_blank">
+
+    <div class="input-field">
+        <fieldset>
+            <legend><b><font size="5">1. Input structure format </font></b></legend>
+            <select id="FORMAT" name="FORMAT">
+                <option value="" disabled selected>Choose the file type</option>
+                <option class="black-text" value="mol">Mol v2000 (*.mol)</option>
+                <option class="black-text" value="sdf">SDF MDL (*.sdf)</option>
+                <option class="black-text" value="pdb">PDB (*.pdb)</option>
+                <option class="black-text" value="cdx">CDX (*.cdx)</option>
+            </select>
+        </fieldset>
+    </div>
+
+    <div class="section">
+        <fieldset>
+            <legend><b><font size="5">2. Auxiliary options</font> </b></legend>
+                <p>If the input structure is a 2D structure, you can check this box to get a 3D project of the structure:</p>
+                <p>
+                    <label class="black-text">
+                        <input type="checkbox" class="checkbox-indigo filled-in" id="proj2to3" name="proj2to3">
+                        <span>Generate 3D structure</span>
+                    </label>
+                </p>
+                <p>If hydrogen atoms are missing from the structure, you can check this box to add hydrogen atoms:</p>
+                <p>
+                    <label class="black-text">
+                        <input type="checkbox" class="filled-in checkbox-indigo" id="addHydr" name="addHydr">
+                        <span>Add hydrogen atoms</span>
+                    </label>
+                </p>
+        </fieldset>
+    </div>
+    <div class="section">
+        <fieldset>
+            <legend><b><font size="5">3. Upload or paste input structure</font></b></legend>
+            <p>Upload a structure file (one compound per submit):</p>
+
+            <div class="file-field input-field">
+              <div class="btn indigo lighten-1">
+                <span>File</span>
+                <input type="file" name="infile" id="infile" accept=".mol,.sdf,.pdb,.cdx">
+              </div>
+              <div class="file-path-wrapper">
+                <input class="file-path validate" type="text">
+              </div>
+            </div>
+            <p><b>OR</b> Paste a structure <font color="red">(if a file has been uploaded we process the uploaded file)</font></p>
+            <div class="input-field col s12">
+              <textarea name="inputtext" id="inputtext" class="materialize-textarea"></textarea>
+              <label for="inputtext">Paste your structure here</label>
+            </div>
+        </fieldset>
+    </div>
+    <fieldset>
+        <legend><b><font size="5">4. Submit</font></b></legend>
+          <button class="btn waves-effect waves-light indigo lighten-1" type="submit" value="Submit">Submit
+            <i class="material-icons right">send</i>
+          </button>
+    </fieldset>
+</form>
+{% endblock %}
