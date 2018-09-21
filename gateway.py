@@ -4,16 +4,20 @@
 
 from __future__ import print_function
 
-# Installed packages
-import requests
-import psycopg2
-from psycopg2.extras import DictCursor
+import os
+import shutil
+import tempfile
+from contextlib import contextmanager
+from time import sleep
 
+# Installed packages
+import psycopg2
 from flask import Flask, request, jsonify, redirect, render_template, url_for
+from psycopg2.extras import DictCursor
 
 # Set up the flask application
 application = Flask(__name__)
-application.config['ALATIS_API_URL'] = 'http://alatis.nmrfam.wisc.edu/upload'
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
 def get_postgres_connection(user='web', database='webservers', host="pinzgau.nmrfam.wisc.edu",
@@ -28,6 +32,15 @@ def get_postgres_connection(user='web', database='webservers', host="pinzgau.nmr
     cur.execute("SET search_path TO dci, public")
 
     return conn, cur
+
+
+@contextmanager
+def TemporaryDirectory():
+    name = tempfile.mkdtemp()
+    try:
+        yield name
+    finally:
+        shutil.rmtree(name)
 
 
 @application.route('/upload', methods=['POST'])
@@ -47,24 +60,52 @@ def upload_file():
     else:
         add_hyd = '0'
 
-    if not file_:
-        structure_file = input_text
-    else:
-        structure_file = file_.read()
+    # if there is no uploaded structure
+    if not file_ and not input_text:
+        return render_template("error.html", error='No uploaded file or pasted file.')
 
-    data = {'format': input_format,
-            'response_type': 'json',
-            'project_2_to_3': projection_3d,
-            'add_hydrogens': add_hyd,
-            'input_text': structure_file
-            }
-    r = requests.post(application.config['ALATIS_API_URL'], data=data)
-    json_result = r.json()
+    with TemporaryDirectory() as folder_path:
+        if not file_:
+            open(os.path.join(folder_path, 'submitted.data'), 'r').write(input_text)
+        else:
+            file_.save()
 
-    if not 'inchi' in json_result:
-        return render_template('error.html', error=json_result['error'])
+        variables = {'binary_path': os.path.join(dir_path, 'binary', 'get_inchi.py'),
+                     'input_format': input_format,
+                     'projection_3d': projection_3d,
+                     'add_hyd': add_hyd,
+                     'inchi_path': os.path.join(dir_path, 'binary', 'inchi-1')}
+        with open(os.path.join(folder_path, 'inchi.sub'), 'w') as fout:
+            fout.write("""universe = vanilla
+        executable = {binary_path}
+        arguments = submitted.data {input_format} {projection_3d} {add_hyd}
+        error = temp.err
+        output = temp.out
+        log = temp.log
+        should_transfer_files = yes
+        transfer_input_files = {inchi_path}, {filename}
+        when_to_transfer_output = on_exit
+        transfer_output_files = display_info, outputs.zip
+        periodic_remove = (time() - QDate) > 7200
+        queue
+        """.format(**variables))
 
-    return redirect(url_for('inchi_search', inchi=json_result['inchi']))
+        os.chdir(folder_path)
+        os.system('condor_submit %s inchi.sub')
+
+        ipath = os.path.join(folder_path, 'inchi.txt')
+        timeout = 0
+        while True:
+            # Easier to ask for forgiveness than permission
+            try:
+                inchi = open(ipath, 'r').read()
+                return redirect(url_for('inchi_search', inchi=inchi))
+            # Results are not yet ready
+            except IOError:
+                sleep(.1)
+                timeout += .1
+                if timeout > 120:
+                    return render_template("error.html", error='Timeout when calculating the InChI string.')
 
 
 @application.route('/inchi/<path:inchi>')
