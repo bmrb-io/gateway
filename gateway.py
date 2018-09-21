@@ -98,6 +98,10 @@ def upload_file():
         while True:
             # Easier to ask for forgiveness than permission
             try:
+                err = open(os.path.join(folder_path, 'temp.out'), 'r').read()
+                if len(err) > 0:
+                    return render_template("error.html", error=err)
+
                 inchi = open(ipath, 'r').read()
                 if len(inchi) == 0:
                     raise ValueError
