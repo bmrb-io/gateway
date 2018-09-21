@@ -9,6 +9,7 @@ import shutil
 import tempfile
 from contextlib import contextmanager
 from time import sleep
+import subprocess
 
 # Installed packages
 import psycopg2
@@ -68,13 +69,12 @@ def upload_file():
         if not file_:
             open(os.path.join(folder_path, 'submitted.data'), 'r').write(input_text)
         else:
-            file_.save()
+            file_.save(os.path.join(folder_path, 'submitted.data'))
 
         variables = {'binary_path': os.path.join(dir_path, 'binary', 'get_inchi.py'),
                      'input_format': input_format,
                      'projection_3d': projection_3d,
-                     'add_hyd': add_hyd,
-                     'inchi_path': os.path.join(dir_path, 'binary', 'inchi-1')}
+                     'add_hyd': add_hyd}
         with open(os.path.join(folder_path, 'inchi.sub'), 'w') as fout:
             fout.write("""universe = vanilla
         executable = {binary_path}
@@ -83,15 +83,15 @@ def upload_file():
         output = temp.out
         log = temp.log
         should_transfer_files = yes
-        transfer_input_files = {inchi_path}, {filename}
+        transfer_input_files = inchi-1, submitted.data
         when_to_transfer_output = on_exit
-        transfer_output_files = display_info, outputs.zip
+        transfer_output_files = inchi.txt
         periodic_remove = (time() - QDate) > 7200
         queue
         """.format(**variables))
-
+        shutil.copy(os.path.join(dir_path, 'binary', 'inchi-1'), os.path.join(folder_path, 'inchi-1'))
         os.chdir(folder_path)
-        os.system('condor_submit %s inchi.sub')
+        subprocess.call(['condor_submit', 'inchi.sub'])
 
         ipath = os.path.join(folder_path, 'inchi.txt')
         timeout = 0
@@ -99,9 +99,11 @@ def upload_file():
             # Easier to ask for forgiveness than permission
             try:
                 inchi = open(ipath, 'r').read()
+                if len(inchi) == 0:
+                    raise ValueError
                 return redirect(url_for('inchi_search', inchi=inchi))
             # Results are not yet ready
-            except IOError:
+            except (IOError, ValueError):
                 sleep(.1)
                 timeout += .1
                 if timeout > 120:
