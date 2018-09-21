@@ -16,7 +16,7 @@ params = {'file_type': sys.argv[2],  # mol, sdf, pdb, cdx, smi
 
 def apply_aux_functions(dir_path, input_file_name, params):
     output_file_name = input_file_name
-    command = ['babel',
+    command = ['obabel',
                '-i%s' % params['file_type'],
                os.path.join(dir_path, input_file_name)]
 
