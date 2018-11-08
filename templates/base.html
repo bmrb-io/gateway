@@ -1,25 +1,25 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <!--
-        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-        <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css">-->
+<head>
+    <!--
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css">-->
 
-        <link rel="stylesheet" href="/static/search.css">
+    <link rel="stylesheet" href="/static/search.css">
 
-        <!--Import Google Icon Font-->
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-        <!--Import materialize.css-->
-        <link rel="stylesheet" href="/static/materialize.min.css">
-        <!--Let browser know website is optimized for mobile-->
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link rel="stylesheet" href="/static/materialize.min.css">
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-        <title>{{ title }}</title>
+    <title>{{ title }}</title>
 
     {% block headextra %} {% endblock %}
-    </head>
-    <body>
+</head>
+<body>
 
 <div>
     <!-- Page Content goes here -->
@@ -62,27 +62,27 @@
     </main>
 
     <footer class="page-footer blue lighten-2">
-      <div class="container">
-        <div class="row">
-          <div class="col l6 s12">
-            <h5 class="black-text">Citation Information</h5>
-            <p class="black-text">In progress...</p>
-          </div>
-          <div class="col l4 offset-l2 s12">
-            <h5 class="black-text">Other Servers</h5>
-            <ul>
-              <li><a class="black-text" href="//gissmo.nmrfam.wisc.edu">GISSMO Server</a></li>
-              <li><a class="black-text" href="//alatis.nmrfam.wisc.edu">ALATIS Server</a></li>
-              <li><a class="black-text" href="//dashti.nmrfam.wisc.edu/camp/">CAMP Server</a></li>
-            </ul>
-          </div>
+        <div class="container">
+            <div class="row">
+                <div class="col l6 s12">
+                    <h5 class="black-text">Citation Information</h5>
+                    <p class="black-text">In progress...</p>
+                </div>
+                <div class="col l4 offset-l2 s12">
+                    <h5 class="black-text">Other Servers</h5>
+                    <ul>
+                        <li><a class="black-text" href="//gissmo.nmrfam.wisc.edu">GISSMO Server</a></li>
+                        <li><a class="black-text" href="//alatis.nmrfam.wisc.edu">ALATIS Server</a></li>
+                        <li><a class="black-text" href="//dashti.nmrfam.wisc.edu/camp/">CAMP Server</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="footer-copyright">
-        <div class="container black-text">© 2018 NMRFAM
-            <a class="black-text right" href="mailto:dashti@wisc.edu?subject=Feedback on Gateway">Contact</a>
+        <div class="footer-copyright">
+            <div class="container black-text">© 2018 NMRFAM
+                <a class="black-text right" href="mailto:dashti@wisc.edu?subject=Feedback on Gateway">Contact</a>
+            </div>
         </div>
-      </div>
     </footer>
 
 </div>
@@ -91,6 +91,7 @@
 var elems = document.querySelectorAll('select');
 var instances = M.FormSelect.init(elems, 'options');
 });
+
 </script>
 </body>
 </html>
