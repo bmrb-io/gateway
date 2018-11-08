@@ -59,6 +59,7 @@
                 <textarea name="inputtext" id="inputtext" class="materialize-textarea"></textarea>
                 <label for="inputtext">Paste your structure here</label>
             </div>
+            You can download an <a href="static/input_2d.sdf">example input file</a>.
         </fieldset>
     </div>
     <fieldset>
@@ -66,6 +67,7 @@
         <button class="btn waves-effect waves-light indigo lighten-1" type="submit" value="Submit">Submit
             <i class="material-icons right">send</i>
         </button>
+        <p>Or view an <a href="{{url_for('inchi_search', inchi='InChI=1S/C8H10N4O2/c1-10-4-9-6-5(10)7(13)12(3)8(14)11(6)2/h4H,1-3H3')}}">example results page</a>.</p>
     </fieldset>
 </form>
 
