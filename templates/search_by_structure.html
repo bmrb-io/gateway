@@ -1,11 +1,13 @@
 {% extends "base.html" %}
 {% block body %}
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <form action="upload" method="post" enctype="multipart/form-data" target="_blank">
 
     <div class="input-field">
         <fieldset>
             <legend><b><font size="5">1. Input structure format </font></b></legend>
+            <p>If you upload a file with one of these extensions, this value will be set automatically.</p>
             <select id="FORMAT" name="FORMAT">
                 <option value="" disabled selected>Choose the file type</option>
                 <option class="black-text" value="mol">Mol v2000 (*.mol)</option>
@@ -64,4 +66,12 @@
           </button>
     </fieldset>
 </form>
+
+<script>
+document.getElementById('infile').onchange = function() {
+    // document.getElementById('FORMAT').selectedIndex =
+    $('#FORMAT').val(this.value.split('.').pop());
+    $('#FORMAT').formSelect();
+};
+</script>
 {% endblock %}
