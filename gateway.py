@@ -77,7 +77,7 @@ def upload_file():
                      'add_hyd': add_hyd}
         with open(os.path.join(folder_path, 'inchi.sub'), 'w') as fout:
             fout.write("""universe = vanilla
-        executable = {binary_path}
+        executable = get_inchi.py
         arguments = submitted.data {input_format} {projection_3d} {add_hyd}
         error = temp.err
         output = temp.out
@@ -90,6 +90,7 @@ def upload_file():
         queue
         """.format(**variables))
         shutil.copy(os.path.join(dir_path, 'binary', 'inchi-1'), os.path.join(folder_path, 'inchi-1'))
+        shutil.copy(variables['binary_path'], folder_path)
         os.chdir(folder_path)
         subprocess.call(['condor_submit', 'inchi.sub'])
 
