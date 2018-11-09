@@ -238,11 +238,13 @@ CREATE VIEW dci.db_links AS SELECT
   d.inchi,
   array_remove(array_agg(DISTINCT a.id), NULL) as alatis_ids,
   array_remove(array_agg(DISTINCT g.id), NULL) as gissmo_ids,
-  array_remove(array_agg(DISTINCT c.id), NULL) as camp_ids
+  array_remove(array_agg(DISTINCT c.id), NULL) as camp_ids,
+  array_remove(array_agg(DISTINCT b.id), NULL) as bmod_ids
 FROM dci.inchi_index AS d
  LEFT JOIN alatis.compound_alatis AS a ON a.inchi=d.inchi
  LEFT JOIN gissmo.entries AS g ON g.inchi=d.inchi
  LEFT JOIN camp.camp AS c ON c.inchi=d.inchi
+ LEFT JOIN bmod.bmod_index AS b ON b.inchi=d.inchi
 GROUP BY d.inchi;
 
 DROP VIEW IF EXISTS dci.names;

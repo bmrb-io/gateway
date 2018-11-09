@@ -62,4 +62,18 @@
         </div>
     </div>
     {% endif %}
+
+    {% if matches.bmod_ids %}
+    <div class="card indigo lighten-1">
+        <div class="card-content black-text">
+            <span class="card-title">BMOD Entries</span>
+            <p>Biomolecular Modeling Database (BMOD) is designed to archive and provide force field parameters of small molecules for different molecular modeling software packages.</p>
+        </div>
+        <div class="card-action">
+            {% for id in matches.bmod_ids %}
+            <a href="http://bmod.nmrfam.wisc.edu/entry/{{id}}" target="_blank">{{id}}</a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 {% endblock %}
