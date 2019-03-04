@@ -120,7 +120,12 @@ def inchi_search(inchi):
     """ Show the results for a given InChI. """
 
     cur = get_postgres_connection(dictionary_cursor=True)[1]
-    cur.execute('SELECT * FROM dci.db_links where inchi=%s', [inchi])
+    try:
+        cur.execute('SELECT * FROM dci.db_links where inchi=%s', [inchi])
+    except psycopg2.ProgrammingError:
+        reload_db()
+        return inchi_search(inchi)
+
     result = cur.fetchone()
     cur.execute('SELECT unnest(name) FROM dci.names where inchi=%s', [inchi])
     unique_names = set()
