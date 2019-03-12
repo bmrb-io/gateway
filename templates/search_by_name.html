@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block body %}
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.1/themes/base/jquery-ui.css">
+<form action="/name" method="get">
+
+    <div class="input-field">
+        <fieldset>
+            <legend><b><font size="5">Search by name </font></b></legend>
+            <input type="text" id="search" name="term" title="Search" value="{{title}}">
+        </fieldset>
+    </div>
+</form>
+
+
+{% if title %}
+<td valign="top">
+
+    <div style="margin-left: .5em; margin-right: .5em">
+        {% if results|length > 0 %}
+        <h2>Search results for query: '{{ title }}'</h2>
+        <table style="width: 85%;">
+            <thead>
+                <tr>
+                    <th align="left">Name</th>
+                    <th align="left">InChI</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in results %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td><a href="{{url_for('inchi_search', inchi=item.inchi)}}">{{ item.inchi }}</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <h1>No results!</h1>
+        {% endif %}
+        <!--- <p><a href="/">Return to home page</a></p> --->
+        <div style="min-height: 25em"></div>
+    </div>
+</td>
+{% endif %}
+
+<script>
+// Use this to highlight the query words in a given text
+function highlight_words(words, text){
+    regex = new RegExp("(" + words.join("|") + ")", "ig");
+    return text.replace(regex, '<strong>$1</strong>');
+}
+
+// These two are for the instant search - at top of page. Do not remove!
+function add_color_span_instant(ul, item) {
+
+    console.log(ul, item);
+    var terms = document.getElementById('search').value.split(/[ ,]+/);
+    var display = highlight_words(terms, item.name);
+
+    return $("<li></li>")
+        .data("item.autocomplete", item)
+        .append("<a><span style='cursor:pointer;'>" + display + "</span></a>")
+        .appendTo(ul);
+}
+
+
+$(document).ready(function(){$( "#search" ).autocomplete({
+    minLength: 2,
+    delay: 0,
+    source: "http://alatis.nmrfam.wisc.edu/search/inchi",
+    select: function( event, ui ) {
+        // Don't put the value in the box when they click
+        event.preventDefault();
+        // Jump to the entry summary page when they click
+        window.location.href = "/inchi/" + ui.item.inchi;
+        return false;
+    }
+}).off('blur').on('blur', function() {
+    if(document.hasFocus()) {
+        $('ul.ui-autocomplete').hide();
+    }
+}).data("ui-autocomplete")._renderItem = function (ul, item) {
+     return add_color_span_instant(ul, item);
+}});
+
+
+
+</script>
+{% endblock %}
