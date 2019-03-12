@@ -71,7 +71,13 @@
     </fieldset>
 </form>
 
+<script type="text/javascript" src="/static/materialize.min.js"></script>
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+var elems = document.querySelectorAll('select');
+var instances = M.FormSelect.init(elems, 'options');
+});
+
 document.getElementById('infile').onchange = function() {
     // document.getElementById('FORMAT').selectedIndex =
     $('#FORMAT').val(this.value.split('.').pop());

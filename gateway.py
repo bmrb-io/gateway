@@ -12,6 +12,7 @@ from time import sleep
 import subprocess
 
 # Installed packages
+import requests
 import psycopg2
 from flask import Flask, request, jsonify, redirect, render_template, url_for
 from psycopg2.extras import DictCursor
@@ -142,6 +143,20 @@ def home_page():
     return render_template("search_by_structure.html")
 
 
+@application.route('/name')
+def name_search():
+    """ Render the name search."""
+
+    term = request.args.get('term', "")
+    if term:
+        results = requests.get('http://alatis.nmrfam.wisc.edu/search/inchi', params={'term': term}).json()
+    else:
+        results = []
+    var_dict = {'title': term, 'results': results}
+
+    return render_template("search_by_name.html", **var_dict)
+
+
 @application.route('/chemical_identifier_search')
 def identifier_search():
     """ Search for a compound by chemical identifier. """
@@ -154,81 +169,6 @@ def reroute():
     """ Reroute to query page."""
     term = request.args.get('term', "")
     return redirect("query?term=%s" % term, code=302)
-
-
-@application.route('/search/results')
-def results():
-    """ Search results. """
-    var_dict = {'title': request.args.get('term', ""),
-                'results': search(local=True)}
-
-    return render_template("search.html", **var_dict)
-
-
-@application.route('/search/query')
-def search(local=False):
-    """ Search the DB. """
-
-    term = request.args.get('term', None)
-    if not term:
-        return "Specify term."
-
-    cur = get_postgres_connection(dictionary_cursor=True)[1]
-
-    limit = " LIMIT 75;"
-    if local:
-        limit = ";"
-
-    if request.args.get('debug', None):
-        return '''
-SELECT * FROM (
-SELECT id,db,term,termname,data_path,similarity(term, '%s') AS sml FROM search_terms
-  WHERE lower(term) LIKE lower('%s')
-UNION
-SELECT id,db,term,termname,data_path,similarity(term, '%s')  FROM search_terms
-  WHERE identical_term @@ plainto_tsquery('%s')
-UNION
-(SELECT cm.id::text, 'PubChem', coalesce(cn.name, 'Unknown Name'), 'Compound',
- 'pubchem/'||cm.id, 1 FROM compound_metadata AS cm
-  LEFT JOIN compound_name AS cn
-ON cn.id = cm.id WHERE cm.id=to_number('0'||'%s', '99999999999')::int ORDER BY cn.seq LIMIT 1)
-UNION
-(SELECT id::text, 'PubChem', name, 'Compound', 'pubchem/'||id, similarity(lower(name), lower(%s)) FROM compound_name
-  WHERE lower(name) LIKE lower('%s') LIMIT 50)) AS f
-ORDER by sml DESC, 2!='PubChem', id ASC LIMIT 75;''' % (term, term + "%", term, term, term, term, term + "%")
-
-    cur.execute('''
-SELECT * FROM (
-SELECT id,db as database,term,termname,data_path,similarity(term, %s) AS sml FROM search_terms
-  WHERE lower(term) LIKE lower(%s)
-UNION
-SELECT id,db,term,termname,data_path,similarity(term, %s)  FROM search_terms
-  WHERE identical_term @@ plainto_tsquery(%s)
-UNION
-(SELECT cm.id::text, 'PubChem', coalesce(cn.name, 'Unknown Name'), 'Compound',
- 'pubchem/'||cm.id, 1 FROM compound_metadata AS cm
-  LEFT JOIN compound_name AS cn
-  ON cn.id = cm.id WHERE cm.id=to_number('0'||%s, '99999999999')::int ORDER BY cn.seq LIMIT 1)
-UNION
-(SELECT id::text, 'PubChem', name, 'Compound', 'pubchem/'||id, similarity(lower(name), lower(%s)) FROM compound_name
-  WHERE lower(name) LIKE lower(%s) LIMIT 50)) AS f
-ORDER by sml DESC, database!='PubChem', id ASC''' + limit, [term, term + "%", term, term, term, term, term + "%"])
-
-    # First query
-    result = []
-    for item in cur.fetchall():
-        res = {"link": item['data_path'],
-               "db": item["database"],
-               "entry": item['id'],
-               "termname": item['termname'],
-               "term": unicode(item['term'], 'utf-8')}
-
-        result.append(res)
-
-    if not local:
-        return jsonify(result)
-
-    return result
 
 
 @application.route('/reload')

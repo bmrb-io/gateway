@@ -37,19 +37,12 @@
             </nav>
 
             <div class="col s3">
-                <!-- Instant search bar
-                <div class="search">
-                    <form method="get" action="/search/results" target="_blank">
-                        <p><span style="font-weight: bold;">Search:</span>
-                            <input type="text" id="search" name="term" title="Search">
-                        </p>
-                   </form>
-                </div>-->
                 <div class="card blue lighten-2">
                     <div class="card-content">
                         <span class="card-title">News</span>
                         <ul>
                             <li><b>Aug 2018</b>: Initiation.</li>
+                            <li><b>March 2019</b>: Added <a href="{{url_for('name_search')}}" class="bold-blue">search by name</a> function.</li>
                         </ul>
                     </div>
                 </div>
@@ -86,13 +79,6 @@
     </footer>
 
 </div>
-<script type="text/javascript" src="/static/materialize.min.js"></script>
-<script>document.addEventListener('DOMContentLoaded', function() {
-var elems = document.querySelectorAll('select');
-var instances = M.FormSelect.init(elems, 'options');
-});
-
-</script>
 </body>
 </html>
 
