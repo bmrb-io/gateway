@@ -20,8 +20,9 @@ function showLess() {
 
 <div class="card indigo lighten-1">
     <div class="card-content black-text">
-        <span class="card-title">Primary compound name: {{ matches.names[0] }}
-            <i class="material-icons right" id="show-more" onclick="showMore()">expand_more</i>
+        <span class="card-title">{% if matches.names|length > 1 %}Primary c{% else %}C{% endif %}ompound name: {{ matches.names[0] }}
+            <i class="material-icons right" id="show-more" onclick="showMore()"
+               {% if matches.names|length < 2 %}style="display: none"{% endif %}>expand_more</i>
             <i class="material-icons right" id="show-less" onclick="showLess()" style="display: none">expand_less</i>
         </span>
 
