@@ -223,5 +223,15 @@ GRANT SELECT ON ALL TABLES IN SCHEMA dci TO web;
     return redirect(url_for('home_page'), 302)
 
 
+@application.route('/hard-reload')
+def hard_reload_db():
+    """ Reload the DB."""
+
+    # Open the DB and clear the existing index
+    conn, cur = get_postgres_connection(user='postgres')
+    cur.execute('REFRESH MATERIALIZED VIEW inchi_index')
+    conn.commit()
+
+
 if __name__ == "__main__":
     reload_db()
