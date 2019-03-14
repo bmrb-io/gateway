@@ -14,9 +14,8 @@ function showLess() {
 }
 </script>
 
-<h3>Database Records</h3>
-<p>For {{inchi}}</p>
-
+<h3>Database Records for {{ matches.names[0] }}</h3>
+<p>Standard {{inchi}}</p>
 
 <div class="card indigo lighten-1">
     <div class="card-content black-text">
@@ -27,7 +26,6 @@ function showLess() {
 
         {% if matches.names|length > 1 %}
         <div id="all-names" style="display: none; padding-left: 1em">
-            <span class="card-title">Other names:</span>
             {% for name in matches.names[1:] %}
             <p>{{name}}</p>
             {% endfor %}
