@@ -127,13 +127,7 @@ def inchi_search(inchi):
         reload_db()
         return inchi_search(inchi)
 
-    result = cur.fetchone()
-    cur.execute('SELECT unnest(name) FROM dci.names where inchi=%s', [inchi])
-    unique_names = set()
-    for name in cur.fetchall():
-        unique_names.add(name[0])
-
-    return render_template('inchi.html', inchi=inchi, matches=result, names=list(unique_names))
+    return render_template('inchi.html', inchi=inchi, matches=cur.fetchone())
 
 
 @application.route('/')
@@ -178,36 +172,49 @@ def reload_db():
     # Open the DB and clear the existing index
     conn, cur = get_postgres_connection(user='postgres')
     cur.execute('''
+CREATE MATERIALIZED VIEW IF NOT EXISTS dci.inchi_index AS SELECT DISTINCT(inchi) FROM (
+SELECT inchi FROM gissmo.entries
+UNION
+SELECT inchi FROM camp.camp
+UNION
+SELECT inchi FROM bmod.bmod_index
+UNION
+SELECT inchi FROM alatis.compound_alatis) s 
+WHERE inchi IS NOT NULL and inchi != '' and inchi != 'FAILED';
+CREATE UNIQUE INDEX IF NOT EXISTS inchi_index_index ON inchi_index (inchi);
+
+DROP VIEW IF EXISTS dci.names CASCADE;
+CREATE VIEW dci.names AS
+select inchi, array_remove(array_agg(name ORDER BY sequence), NULL) as name FROM
+(SELECT ii.inchi, cn.name, cn.seq as sequence
+ FROM dci.inchi_index as ii
+   LEFT JOIN alatis.compound_alatis as ca on ii.inchi=ca.inchi
+   LEFT JOIN alatis.compound_name as cn on ca.id=cn.id
+UNION ALL
+SELECT ii.inchi, g.name, 0
+ FROM dci.inchi_index as ii
+   LEFT JOIN gissmo.entries as g on ii.inchi=g.inchi
+UNION ALL
+SELECT ii.inchi, unnest(c.name) as name, 100
+ FROM dci.inchi_index as ii
+   LEFT JOIN camp.camp as c ON ii.inchi=c.inchi) as why
+GROUP BY inchi;
+
 DROP VIEW IF EXISTS dci.db_links;
 CREATE VIEW dci.db_links AS SELECT
   d.inchi,
   array_remove(array_agg(DISTINCT a.id), NULL) as alatis_ids,
   array_remove(array_agg(DISTINCT g.id), NULL) as gissmo_ids,
   array_remove(array_agg(DISTINCT c.id), NULL) as camp_ids,
-  array_remove(array_agg(DISTINCT b.id), NULL) as bmod_ids
+  array_remove(array_agg(DISTINCT b.id), NULL) as bmod_ids,
+  n.name as names
 FROM dci.inchi_index AS d
  LEFT JOIN alatis.compound_alatis AS a ON a.inchi=d.inchi
  LEFT JOIN gissmo.entries AS g ON g.inchi=d.inchi
  LEFT JOIN camp.camp AS c ON c.inchi=d.inchi
  LEFT JOIN bmod.bmod_index AS b ON b.inchi=d.inchi
-GROUP BY d.inchi;
-
-DROP VIEW IF EXISTS dci.names;
-CREATE VIEW dci.names AS
-select inchi, array_agg(name) as name FROM
-(SELECT ii.inchi, cn.name
- FROM dci.inchi_index as ii
-   LEFT JOIN alatis.compound_alatis as ca on ii.inchi=ca.inchi
-   LEFT JOIN alatis.compound_name as cn on ca.id=cn.id
-UNION ALL
-SELECT ii.inchi, g.name
- FROM dci.inchi_index as ii
-   LEFT JOIN gissmo.entries as g on ii.inchi=g.inchi
-UNION ALL
-SELECT ii.inchi, unnest(c.name) as name
- FROM dci.inchi_index as ii
-   LEFT JOIN camp.camp as c ON ii.inchi=c.inchi) as why
-GROUP BY inchi;
+ LEFT JOIN names AS n ON n.inchi=d.inchi
+GROUP BY d.inchi, n.name;
 
 GRANT USAGE ON SCHEMA dci TO web;
 GRANT SELECT ON ALL TABLES IN SCHEMA dci TO web;
