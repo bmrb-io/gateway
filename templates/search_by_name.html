@@ -25,14 +25,14 @@
             <thead>
                 <tr>
                     <th align="left">Name</th>
-                    <th align="left">InChI</th>
+                    <th align="left">Alternative matched names</th>
                 </tr>
             </thead>
             <tbody>
                 {% for item in results %}
                 <tr>
-                    <td>{{ item.name }}</td>
-                    <td><a href="{{url_for('inchi_search', inchi=item.inchi)}}">{{ item.inchi }}</a></td>
+                    <td><a href="{{url_for('inchi_search', inchi=item.inchi)}}" title="{{ item.inchi }}">{{ item.name }}</a></td>
+                    <td>{% for one_name in item['matched-names'] %}{{one_name}}<br>{% endfor %}</td>
                 </tr>
                 {% endfor %}
             </tbody>
