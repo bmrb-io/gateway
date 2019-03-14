@@ -9,7 +9,14 @@
     <div class="input-field">
         <fieldset>
             <legend><b><font size="5">Search by name </font></b></legend>
-            <input type="text" id="search" name="term" title="Search" value="{{title}}">
+            <div class="col s11">
+                <input type="text" id="search" name="term" title="Search" value="{{title}}" class="s8">
+            </div>
+            <div class="col s1">
+                <button class="btn waves-effect waves-light indigo lighten-1 s4" type="submit" value="Submit">
+                    Search<i class="material-icons right">send</i>
+                </button>
+            </div>
         </fieldset>
     </div>
 </form>
