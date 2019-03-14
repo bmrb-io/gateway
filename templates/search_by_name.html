@@ -1,4 +1,7 @@
 {% extends "base.html" %}
+{% block title %}
+{% if title %}Search for {{title}}{% else %}Search by compound name{% endif %}
+{% endblock %}
 {% block body %}
 
 <form action="/name" method="get">
