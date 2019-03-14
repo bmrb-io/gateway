@@ -68,7 +68,7 @@ def upload_file():
 
     with TemporaryDirectory() as folder_path:
         if not file_:
-            open(os.path.join(folder_path, 'submitted.data'), 'r').write(input_text)
+            open(os.path.join(folder_path, 'submitted.data'), 'w').write(input_text)
         else:
             file_.save(os.path.join(folder_path, 'submitted.data'))
 
