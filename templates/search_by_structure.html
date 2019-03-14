@@ -78,11 +78,13 @@ var elems = document.querySelectorAll('select');
 var instances = M.FormSelect.init(elems, 'options');
 });
 
-document.getElementById('infile').onchange = function() {
-    // document.getElementById('FORMAT').selectedIndex =
-    $('#FORMAT').val(this.value.split('.').pop());
-    $('#FORMAT').formSelect();
-};
+$(document).ready(function() {
+    document.getElementById('infile').onchange = function() {
+        // document.getElementById('FORMAT').selectedIndex =
+        $('#FORMAT').val(this.value.split('.').pop());
+        $('#FORMAT').formSelect();
+    };
+});
 
 </script>
 {% endblock %}
