@@ -120,6 +120,10 @@ def upload_file():
 def inchi_search(inchi):
     """ Show the results for a given InChI. """
 
+    # Strip off a trailing path if needed
+    if inchi.endswith('/'):
+        inchi = inchi[:-1]
+
     cur = get_postgres_connection(dictionary_cursor=True)[1]
     try:
         cur.execute('SELECT * FROM dci.db_links where inchi=%s', [inchi])
@@ -127,7 +131,11 @@ def inchi_search(inchi):
         reload_db()
         return inchi_search(inchi)
 
-    return render_template('inchi.html', inchi=inchi, matches=cur.fetchone())
+    match = cur.fetchone()
+    if match:
+        return render_template('inchi.html', inchi=inchi, matches=match)
+    else:
+        return render_template('error.html', error="No compound matching that InChI was found in the database.")
 
 
 @application.route('/')
