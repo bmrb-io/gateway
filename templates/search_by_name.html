@@ -9,10 +9,10 @@
     <div class="input-field">
         <fieldset>
             <legend><b><font size="5">Search by name </font></b></legend>
-            <div class="col s11">
-                <input type="text" id="search" name="term" title="Search" value="{{title}}" class="s8">
+            <div class="col s10">
+                <input type="text" id="search" name="term" title="Search" value="{{title}}">
             </div>
-            <div class="col s1">
+            <div class="col s2">
                 <button class="btn waves-effect waves-light indigo lighten-1 s4" type="submit" value="Submit">
                     Search<i class="material-icons right">send</i>
                 </button>
@@ -25,10 +25,19 @@
 {% if title %}
 <td valign="top">
 
-    <div style="margin-left: .5em; margin-right: .5em">
-        {% if results|length > 0 %}
+    <div>
+        {% if results %}
+        <div class="col s12">
         <h2>Search results for query: '{{ title }}'</h2>
-        <table style="width: 85%;">
+        {% if not results['full_result'] %}
+        <div class="card blue lighten-2">
+            <div class="card-content">
+                <span class="card-title">Notice: Your query matched too many compounds to perform a general similarity search. Instead,
+                only compound names which start with your search term were matched.</span>
+            </div>
+        </div>
+        {% endif %}
+        <table>
             <thead>
                 <tr>
                     <th align="left">Name</th>
@@ -36,7 +45,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for item in results %}
+                {% for item in results['results'] %}
                 <tr>
                     <td><a href="{{url_for('inchi_search', inchi=item.inchi)}}" title="{{ item.inchi }}">{{ item.name }}</a></td>
                     <td>{% for one_name in item['matched-names'] %}{{one_name}}<br>{% endfor %}</td>
@@ -44,6 +53,7 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
         {% else %}
         <h1>No results!</h1>
         {% endif %}

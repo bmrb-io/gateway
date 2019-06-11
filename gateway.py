@@ -153,7 +153,7 @@ def name_search():
     if term:
         results = requests.get('http://alatis.nmrfam.wisc.edu/search/inchi', params={'term': term}).json()
     else:
-        results = []
+        results = None
     var_dict = {'title': term, 'results': results}
 
     return render_template("search_by_name.html", **var_dict)
