@@ -116,6 +116,13 @@ def upload_file():
                     return render_template("error.html", error='Timeout when calculating the InChI string.')
 
 
+@application.route('/inchi_form')
+def inchi_search_form():
+
+    inchi = request.args.get('inchi', '')
+    return inchi_search(inchi)
+
+
 @application.route('/inchi/<path:inchi>')
 def inchi_search(inchi):
     """ Show the results for a given InChI. """
