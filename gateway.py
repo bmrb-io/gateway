@@ -116,20 +116,21 @@ def upload_file():
                     return render_template("error.html", error='Timeout when calculating the InChI string.')
 
 
-@application.route('/inchi_form')
-def inchi_search_form():
-
-    inchi = request.args.get('inchi', '')
-    return inchi_search(inchi)
-
-
+@application.route('/inchi')
 @application.route('/inchi/<path:inchi>')
-def inchi_search(inchi):
+def inchi_search(inchi=None):
     """ Show the results for a given InChI. """
+
+    # The aren't using the URL, they are sending as parameter
+    if inchi is None:
+        inchi = request.args.get('inchi', '')
 
     # Strip off a trailing path if needed
     if inchi.endswith('/'):
         inchi = inchi[:-1]
+
+    if not inchi.startswith('InChI='):
+        inchi = 'InChI=' + inchi
 
     cur = get_postgres_connection(dictionary_cursor=True)[1]
     try:
@@ -140,16 +141,16 @@ def inchi_search(inchi):
 
     match = cur.fetchone()
     if match:
-        return render_template('inchi.html', inchi=inchi, matches=match)
+        return render_template("multi_search.html", inchi=inchi, matches=match, active='result')
     else:
-        return render_template('error.html', error="No compound matching that InChI was found in the database.")
+        return render_template("multi_search.html", inchi=inchi, active='result',
+                               error="No compound matching that InChI was found in the database.")
 
 
 @application.route('/')
-@application.route('/structure_search')
 def home_page():
     """ Render the home page."""
-    return render_template("search_by_structure.html")
+    return render_template("multi_search.html", active='structure')
 
 
 @application.route('/name')
@@ -161,23 +162,9 @@ def name_search():
         results = requests.get('http://alatis.nmrfam.wisc.edu/search/inchi', params={'term': term}).json()
     else:
         results = None
-    var_dict = {'title': term, 'results': results}
+    var_dict = {'title': term, 'results': results, 'active': 'name'}
 
-    return render_template("search_by_name.html", **var_dict)
-
-
-@application.route('/chemical_identifier_search')
-def identifier_search():
-    """ Search for a compound by chemical identifier. """
-
-    return render_template("search_by_inchi_smiles.html")
-
-
-@application.route('/search')
-def reroute():
-    """ Reroute to query page."""
-    term = request.args.get('term', "")
-    return redirect("query?term=%s" % term, code=302)
+    return render_template("multi_search.html", **var_dict)
 
 
 @application.route('/reload')
