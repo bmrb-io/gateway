@@ -147,22 +147,52 @@ with names that begin with your search term are displayed.</span>
     </div>
 
     <div id="inchi" class="col s12">
-        <form action="/inchi" method="get">
+        <form action="/inchi_chirality" method="get">
 
             <div class="input-field">
                 <fieldset>
                     <legend><b><font size="5">Search by InChI </font></b></legend>
-                    <div class="col s10">
-                        <input type="text" id="search_inchi" name="inchi" title="Search" value="{{inchi}}">
+                    <div class="row">
+                        <div class="col s10">
+                            <input type="text" id="search_inchi" name="inchi" title="Search" value="{{inchi}}">
+                        </div>
+                        <div class="col s2">
+                            <button class="btn waves-effect waves-light indigo lighten-1 s4" type="submit"
+                                    value="Submit">
+                                Search<i class="material-icons right">send</i>
+                            </button>
+                        </div>
                     </div>
-                    <div class="col s2">
-                        <button class="btn waves-effect waves-light indigo lighten-1 s4" type="submit" value="Submit">
-                            Search<i class="material-icons right">send</i>
-                        </button>
+
+                    <div class="row">
+                        <div class="col s12">Hint: You can use '?' to specify unknown chirality.</div>
                     </div>
                 </fieldset>
             </div>
         </form>
+
+        {% if chiral_matches %}
+        <div class="col s12">
+            <table>
+                <thead>
+                <tr>
+                    <th align="left">InChI</th>
+                    <th align="left">Most common names</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in chiral_matches %}
+                <tr>
+                    <td><a href="{{url_for('inchi_search', inchi=item.inchi)}}" title="{{ item.inchi }}">{{
+                        item.inchi }}</a></td>
+                    <td>{% for one_name in item['names'] %}{% if loop.index <= 5 %}{{one_name}}<br>{% endif %}{% endfor %}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <h4>No results for query '{{inchi}}'!</h4>
+        {% endif %}
 
         {% if error %}
         <h4>{{ error }}</h4>

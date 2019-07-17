@@ -5,6 +5,7 @@
 from __future__ import print_function
 
 import os
+import re
 import shutil
 import tempfile
 from contextlib import contextmanager
@@ -114,6 +115,61 @@ def upload_file():
                 timeout += .1
                 if timeout > 120:
                     return render_template("error.html", error='Timeout when calculating the InChI string.')
+
+
+@application.route('/inchi_chirality')
+@application.route('/inchi_chirality/<path:inchi>')
+def inchi_chiral_search(inchi=None):
+    """ Show the results for a given InChI. """
+
+    # The aren't using the URL, they are sending as parameter
+    if inchi is None:
+        inchi = request.args.get('inchi', '')
+
+    if not inchi:
+        return []
+
+    # Strip off a trailing path if needed
+    if inchi.endswith('/'):
+        inchi = inchi[:-1]
+
+    if not inchi.startswith('InChI='):
+        inchi = 'InChI=' + inchi
+
+    chiral_start = inchi.index(r'/t') + 1
+
+    chiral_end = inchi.index('/', chiral_start)
+    replace_from = inchi[chiral_start:chiral_end]
+
+    def enumerate_chirality(chiral_inchi_segment):
+
+        for chiral_center in re.finditer('[u?]', chiral_inchi_segment):
+            position = chiral_center.span()[0]
+            left_hand = enumerate_chirality(
+                chiral_inchi_segment[0:position] + '+' + chiral_inchi_segment[position + 1:])
+            right_hand = enumerate_chirality(
+                chiral_inchi_segment[0:position] + '-' + chiral_inchi_segment[position + 1:])
+            return right_hand + left_hand
+
+        return [chiral_inchi_segment]
+
+    # Have to query multiple times or postgres doesn't realize it can use the index - so weird
+    cur = get_postgres_connection(dictionary_cursor=True)[1]
+    sql = 'SELECT inchi, names FROM dci.db_links where inchi=%s'
+    results = []
+    for chiral_chunk in enumerate_chirality(replace_from):
+        cur.execute(sql, [inchi.replace(replace_from, chiral_chunk)])
+        result = cur.fetchone()
+        if result:
+            results.append(result)
+
+    if results:
+        return render_template("multi_search.html", inchi=inchi, chiral_matches=results, active='result')
+    else:
+        return render_template("multi_search.html", inchi=inchi, active='result',
+                               error="No compound matching that InChI was found in the database.")
+
+
 
 
 @application.route('/inchi')
