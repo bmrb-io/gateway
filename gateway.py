@@ -117,9 +117,9 @@ def upload_file():
                     return render_template("error.html", error='Timeout when calculating the InChI string.')
 
 
-@application.route('/inchi_chirality')
-@application.route('/inchi_chirality/<path:inchi>')
-def inchi_chiral_search(inchi=None):
+@application.route('/inchi')
+@application.route('/inchi/<path:inchi>')
+def inchi_search(inchi=None):
     """ Show the results for a given InChI. """
 
     # The aren't using the URL, they are sending as parameter
@@ -136,10 +136,7 @@ def inchi_chiral_search(inchi=None):
     if not inchi.startswith('InChI='):
         inchi = 'InChI=' + inchi
 
-    chiral_start = inchi.index(r'/t') + 1
-
-    chiral_end = inchi.index('/', chiral_start)
-    replace_from = inchi[chiral_start:chiral_end]
+    #InChI=1S/C6H12O6/c7-1-3(9)5(11)6(12)4(10)2-8/h3,5-9,11-12H,1-2H2/t3?,5?,6u/m1/s1
 
     def enumerate_chirality(chiral_inchi_segment):
 
@@ -153,9 +150,21 @@ def inchi_chiral_search(inchi=None):
 
         return [chiral_inchi_segment]
 
+
+    # This can fail if InChI doesn't have chirality section
+    try:
+        chiral_start = inchi.index(r'/t') + 1
+        chiral_end = inchi.index('/', chiral_start)
+        replace_from = inchi[chiral_start:chiral_end]
+    except ValueError:
+        return render_template("multi_search.html", inchi=inchi, active='inchi',
+                               error="Invalid InChI string.")
+
+    chiral_options = enumerate_chirality(replace_from)
+
     # Have to query multiple times or postgres doesn't realize it can use the index - so weird
     cur = get_postgres_connection(dictionary_cursor=True)[1]
-    sql = 'SELECT inchi, names FROM dci.db_links where inchi=%s'
+    sql = 'SELECT * FROM dci.db_links where inchi=%s'
     results = []
     for chiral_chunk in enumerate_chirality(replace_from):
         cur.execute(sql, [inchi.replace(replace_from, chiral_chunk)])
@@ -164,42 +173,16 @@ def inchi_chiral_search(inchi=None):
             results.append(result)
 
     if results:
-        return render_template("multi_search.html", inchi=inchi, chiral_matches=results, active='result')
+        # No chirality - go straight to the results
+        if len(chiral_options) == 1:
+            return render_template("multi_search.html", inchi=inchi, matches=results[0], chiral_matches=results,
+                                   active='result')
+        else:
+            # Chirality - display the results page
+            return render_template("multi_search.html", inchi=inchi, chiral_matches=results, active='inchi')
     else:
-        return render_template("multi_search.html", inchi=inchi, active='result',
-                               error="No compound matching that InChI was found in the database.")
-
-
-
-
-@application.route('/inchi')
-@application.route('/inchi/<path:inchi>')
-def inchi_search(inchi=None):
-    """ Show the results for a given InChI. """
-
-    # The aren't using the URL, they are sending as parameter
-    if inchi is None:
-        inchi = request.args.get('inchi', '')
-
-    # Strip off a trailing path if needed
-    if inchi.endswith('/'):
-        inchi = inchi[:-1]
-
-    if not inchi.startswith('InChI='):
-        inchi = 'InChI=' + inchi
-
-    cur = get_postgres_connection(dictionary_cursor=True)[1]
-    try:
-        cur.execute('SELECT * FROM dci.db_links where inchi=%s', [inchi])
-    except psycopg2.ProgrammingError:
-        reload_db()
-        return inchi_search(inchi)
-
-    match = cur.fetchone()
-    if match:
-        return render_template("multi_search.html", inchi=inchi, matches=match, active='result')
-    else:
-        return render_template("multi_search.html", inchi=inchi, active='result',
+        # No matches
+        return render_template("multi_search.html", inchi=inchi, active='inchi',
                                error="No compound matching that InChI was found in the database.")
 
 

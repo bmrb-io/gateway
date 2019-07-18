@@ -5,10 +5,15 @@
 <div class="row" style="margin-top: 1em">
     <div class="col s12">
         <ul class="tabs">
-            <li class="tab col s3"><a {% if active== 'structure' %}class="active"{% endif %}href="#structure">Search by structure</a></li>
-            <li class="tab col s3"><a {% if active== 'name' %}class="active"{% endif %} href="#name">Search by name</a></li>
-            <li class="tab col s3"><a {% if active== 'result' and not matches %}class="active"{% endif %} href="#inchi">Search by InChI</a></li>
-           {% if matches  %} <li class="tab col s3"><a class="active" href="#result">Selected compound</a></li>{% endif %}
+            <li class="tab col s3"><a {% if active== 'structure' %}class="active"{% endif %}href="#structure">Search by
+                structure</a></li>
+            <li class="tab col s3"><a {% if active== 'name' %}class="active"{% endif %} href="#name">Search by name</a>
+            </li>
+            <li class="tab col s3"><a {% if active== 'inchi' %}class="active"{% endif %} href="#inchi">Search by
+                InChI</a></li>
+            {% if active == 'result' %}
+            <li class="tab col s3"><a class="active" href="#result">Selected compound</a></li>
+            {% endif %}
         </ul>
     </div>
 
@@ -95,8 +100,8 @@
                     <legend><b><font size="5">Search by name </font></b></legend>
                     <div class="col s10">
                         <input type="text" id="search" name="term" title="Search"
-                               {% if title %}value="{{title}}"{% endif %}
-                               {% if matches and matches.names %}value="{{ matches.names[0] }}"{% endif %}>
+                               {% if title %}value="{{title}}" {% endif %}
+                               {% if matches and matches.names %}value="{{ matches.names[0] }}" {% endif %}>
                     </div>
                     <div class="col s2">
                         <button class="btn waves-effect waves-light indigo lighten-1 s4" type="submit" value="Submit">
@@ -124,6 +129,7 @@ with names that begin with your search term are displayed.</span>
                     <tr>
                         <th align="left">Name</th>
                         <th align="left">Alternative matched names</th>
+                        <!--<th>Image</th>-->
                     </tr>
                     </thead>
                     <tbody>
@@ -132,13 +138,14 @@ with names that begin with your search term are displayed.</span>
                         <td><a href="{{url_for('inchi_search', inchi=item.inchi)}}" title="{{ item.inchi }}">{{
                             item.name }}</a></td>
                         <td>{% for one_name in item['matched-names'] %}{{one_name}}<br>{% endfor %}</td>
+                        <!--<td><button>View image</button><img src="https://cactus.nci.nih.gov/chemical/structure/{{inchi}}/image"></td>-->
                     </tr>
                     {% endfor %}
                     </tbody>
                 </table>
                 {% else %}
                 <h4>No results for query '{{title}}'!</h4>
-            {% endif %}
+                {% endif %}
             </div>
 
             {% endif %}
@@ -147,7 +154,7 @@ with names that begin with your search term are displayed.</span>
     </div>
 
     <div id="inchi" class="col s12">
-        <form action="/inchi_chirality" method="get">
+        <form action="/inchi" method="get">
 
             <div class="input-field">
                 <fieldset>
@@ -185,22 +192,26 @@ with names that begin with your search term are displayed.</span>
                 <tr>
                     <td><a href="{{url_for('inchi_search', inchi=item.inchi)}}" title="{{ item.inchi }}">{{
                         item.inchi }}</a></td>
-                    <td>{% for one_name in item['names'] %}{% if loop.index <= 5 %}{{one_name}}<br>{% endif %}{% endfor %}</td>
+                    <td>{% for one_name in item['names'] %}{% if loop.index <= 5 %}{{one_name}}<br>{% endif %}{% endfor
+                        %}
+                    </td>
                 </tr>
                 {% endfor %}
                 </tbody>
             </table>
             {% else %}
+            {% if inchi %}
             <h4>No results for query '{{inchi}}'!</h4>
-        {% endif %}
+            {% endif %}
+            {% endif %}
 
-        {% if error %}
-        <h4>{{ error }}</h4>
-        {% endif %}
+            {% if error %}
+            <h4>{{ error }}</h4>
+            {% endif %}
+        </div>
     </div>
 
     {% if active == 'result' %}
-    {% if matches %}
     <div id="result" class="col s12">
         <h3>Database Records for {{ matches.names[0] }}</h3>
         <p>Standard {{inchi}}</p>
@@ -284,7 +295,6 @@ with names that begin with your search term are displayed.</span>
             </div>
         </div>
         {% endif %}
-        {% endif %}
     </div>
     {% endif %}
 
@@ -318,6 +328,7 @@ function showLess() {
   $('#show-more').show();
   $('#show-less').hide();
 }
+
 
 
 
