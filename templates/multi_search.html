@@ -129,7 +129,7 @@ with names that begin with your search term are displayed.</span>
                     <tr>
                         <th align="left">Name</th>
                         <th align="left">Alternative matched names</th>
-                        <!--<th>Image</th>-->
+                        <th>Image</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -138,7 +138,8 @@ with names that begin with your search term are displayed.</span>
                         <td><a href="{{url_for('inchi_search', inchi=item.inchi)}}" title="{{ item.inchi }}">{{
                             item.name }}</a></td>
                         <td>{% for one_name in item['matched-names'] %}{{one_name}}<br>{% endfor %}</td>
-                        <!--<td><button>View image</button><img src="https://cactus.nci.nih.gov/chemical/structure/{{inchi}}/image"></td>-->
+                        <td><button class="btn waves-effect waves-light blue lighten-1 s4"
+                                    onclick="addImage(this, '{{item.inchi}}')">View image</button></td>
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -185,6 +186,7 @@ with names that begin with your search term are displayed.</span>
                 <tr>
                     <th align="left">InChI</th>
                     <th align="left">Most common names</th>
+                    <th>Image</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -192,9 +194,12 @@ with names that begin with your search term are displayed.</span>
                 <tr>
                     <td><a href="{{url_for('inchi_search', inchi=item.inchi)}}" title="{{ item.inchi }}">{{
                         item.inchi }}</a></td>
-                    <td>{% for one_name in item['names'] %}{% if loop.index <= 5 %}{{one_name}}<br>{% endif %}{% endfor
-                        %}
+                    <td>{% for one_name in item['names'] %}
+                        {% if loop.index <= 5 %}{{one_name}}<br>{% endif %}
+                        {% endfor %}
                     </td>
+                    <td><button class="btn waves-effect waves-light blue lighten-1 s4"
+                                    onclick="addImage(this, '{{item.inchi}}')">View image</button></td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -215,6 +220,7 @@ with names that begin with your search term are displayed.</span>
     <div id="result" class="col s12">
         <h3>Database Records for {{ matches.names[0] }}</h3>
         <p>Standard {{inchi}}</p>
+        <!--<img src="https://cactus.nci.nih.gov/chemical/structure/{{inchi}}/image">-->
 
         <div class="card indigo lighten-1">
             <div class="card-content black-text">
@@ -329,7 +335,13 @@ function showLess() {
   $('#show-less').hide();
 }
 
-
+function addImage(item, inchi) {
+    var img = document.createElement('img');
+    img.src = 'https://cactus.nci.nih.gov/chemical/structure/' + inchi + '/image';
+    var parent = item.parentElement;
+    parent.removeChild(parent.firstChild);
+    parent.appendChild(img)
+}
 
 
 </script>
