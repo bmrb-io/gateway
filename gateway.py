@@ -156,11 +156,9 @@ def inchi_search(inchi=None):
         chiral_start = inchi.index(r'/t') + 1
         chiral_end = inchi.index('/', chiral_start)
         replace_from = inchi[chiral_start:chiral_end]
+        chiral_options = enumerate_chirality(replace_from)
     except ValueError:
-        return render_template("multi_search.html", inchi=inchi, active='inchi',
-                               error="Invalid InChI string.")
-
-    chiral_options = enumerate_chirality(replace_from)
+        chiral_options = [inchi]
 
     # Have to query multiple times or postgres doesn't realize it can use the index - so weird
     cur = get_postgres_connection(dictionary_cursor=True)[1]
