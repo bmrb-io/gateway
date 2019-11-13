@@ -150,7 +150,6 @@ def inchi_search(inchi=None):
 
         return [chiral_inchi_segment]
 
-
     try:
         chiral_start = inchi.index(r'/t') + 1
         chiral_end = inchi.index('/', chiral_start)
@@ -211,7 +210,7 @@ def reload_db():
     # Open the DB and clear the existing index
     conn, cur = get_postgres_connection(user='postgres')
     cur.execute('''
-CREATE MATERIALIZED VIEW IF NOT EXISTS dci.inchi_index AS SELECT DISTINCT(inchi) FROM (
+CREATE MATERIALIZED VIEW IF NOT EXISTS dci.inchi_index_tmp AS SELECT DISTINCT(inchi) FROM (
 SELECT inchi FROM gissmo.entries
 UNION
 SELECT inchi FROM camp.camp
@@ -220,7 +219,10 @@ SELECT inchi FROM bmod.bmod_index
 UNION
 SELECT inchi FROM alatis.compound_alatis) s 
 WHERE inchi IS NOT NULL and inchi != '' and inchi != 'FAILED';
-CREATE UNIQUE INDEX IF NOT EXISTS inchi_index_index ON inchi_index (inchi);
+CREATE UNIQUE INDEX ON inchi_index_tmp (inchi);
+ALTER MATERIALIZED VIEW IF EXISTS dci.inchi_index RENAME TO inchi_index_old;
+ALTER MATERIALIZED VIEW dci.inchi_index_tmp RENAME TO inchi_index;
+DROP MATERIALIZED VIEW dci.inchi_index_old CASCADE;
 
 DROP VIEW IF EXISTS dci.names CASCADE;
 CREATE VIEW dci.names AS
@@ -260,16 +262,6 @@ GRANT SELECT ON ALL TABLES IN SCHEMA dci TO web;
 ''')
     conn.commit()
     return redirect(url_for('home_page'), 302)
-
-
-@application.route('/hard-reload')
-def hard_reload_db():
-    """ Reload the DB."""
-
-    # Open the DB and clear the existing index
-    conn, cur = get_postgres_connection(user='postgres')
-    cur.execute('REFRESH MATERIALIZED VIEW inchi_index')
-    conn.commit()
 
 
 if __name__ == "__main__":
