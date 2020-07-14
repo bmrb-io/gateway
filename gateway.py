@@ -23,7 +23,7 @@ application = Flask(__name__)
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
-def get_postgres_connection(user='web', database='webservers', host="localhost",
+def get_postgres_connection(user='web', database='webservers', host="pinzgau",
                             dictionary_cursor=False):
     """ Returns a connection to postgres and a cursor."""
 
