@@ -169,7 +169,7 @@ def inchi_search(inchi=None):
         if result:
             results.append(result)
 
-    if str(request.args.get('json', False)).lower() == 'true':
+    if request.args.get('format', 'html') == 'json':
         return jsonify(results)
 
     if results:
@@ -203,8 +203,8 @@ def name_search():
         results = None
     var_dict = {'title': term, 'results': results, 'active': 'name'}
 
-    if str(request.args.get('json', False)).lower() == 'true':
-        return jsonify(var_dict)
+    if request.args.get('format', 'html') == 'json':
+        return jsonify(results)
 
     return render_template("multi_search.html", **var_dict)
 
