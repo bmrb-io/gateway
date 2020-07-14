@@ -169,6 +169,9 @@ def inchi_search(inchi=None):
         if result:
             results.append(result)
 
+    if str(request.args.get('json', False)).lower() == 'true':
+        return jsonify(results)
+
     if results:
         # No chirality - go straight to the results
         if len(chiral_options) == 1:
@@ -199,6 +202,9 @@ def name_search():
     else:
         results = None
     var_dict = {'title': term, 'results': results, 'active': 'name'}
+
+    if str(request.args.get('json', False)).lower() == 'true':
+        return jsonify(var_dict)
 
     return render_template("multi_search.html", **var_dict)
 
