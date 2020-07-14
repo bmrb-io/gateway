@@ -151,20 +151,20 @@ def inchi_search(inchi=None):
         return [chiral_inchi_segment]
 
 
-    # This can fail if InChI doesn't have chirality section
     try:
         chiral_start = inchi.index(r'/t') + 1
         chiral_end = inchi.index('/', chiral_start)
         replace_from = inchi[chiral_start:chiral_end]
         chiral_options = enumerate_chirality(replace_from)
     except ValueError:
-        chiral_options = [inchi]
+        chiral_options = ['']
+        replace_from = 'DO NOT REPLACE'
 
     # Have to query multiple times or postgres doesn't realize it can use the index - so weird
     cur = get_postgres_connection(dictionary_cursor=True)[1]
     sql = 'SELECT * FROM dci.db_links where inchi=%s'
     results = []
-    for chiral_chunk in enumerate_chirality(replace_from):
+    for chiral_chunk in chiral_options:
         cur.execute(sql, [inchi.replace(replace_from, chiral_chunk)])
         result = cur.fetchone()
         if result:
