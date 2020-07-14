@@ -23,7 +23,7 @@ application = Flask(__name__)
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
-def get_postgres_connection(user='web', database='webservers', host="pinzgau.nmrfam.wisc.edu",
+def get_postgres_connection(user='web', database='webservers', host="localhost",
                             dictionary_cursor=False):
     """ Returns a connection to postgres and a cursor."""
 
@@ -159,15 +159,20 @@ def inchi_search(inchi=None):
         chiral_options = ['']
         replace_from = 'DO NOT REPLACE'
 
+    format = request.args.get('format', 'html')
+
     # Have to query multiple times or postgres doesn't realize it can use the index - so weird
     cur = get_postgres_connection(dictionary_cursor=True)[1]
-    sql = 'SELECT * FROM dci.db_links where inchi=%s'
+    sql = 'SELECT inchi,alatis_ids as pubmed_ids,gissmo_ids,camp_ids,bmod_ids, names FROM dci.db_links where inchi=%s'
     results = []
     for chiral_chunk in chiral_options:
         cur.execute(sql, [inchi.replace(replace_from, chiral_chunk)])
         result = cur.fetchone()
         if result:
-            results.append(result)
+            if format == 'json':
+                results.append(dict(result))
+            else:
+                results.append(result)
 
     if request.args.get('format', 'html') == 'json':
         return jsonify(results)
