@@ -1,8 +1,6 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 """ Power the gateway server. """
-
-from __future__ import print_function
 
 import os
 import re
@@ -23,7 +21,7 @@ application = Flask(__name__)
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
 
-def get_postgres_connection(user='web', database='webservers', host="pinzgau",
+def get_postgres_connection(user='web', database='webservers', host="localhost",
                             dictionary_cursor=False):
     """ Returns a connection to postgres and a cursor."""
 
@@ -136,7 +134,7 @@ def inchi_search(inchi=None):
     if not inchi.startswith('InChI='):
         inchi = 'InChI=' + inchi
 
-    #InChI=1S/C6H12O6/c7-1-3(9)5(11)6(12)4(10)2-8/h3,5-9,11-12H,1-2H2/t3?,5?,6u/m1/s1
+    # InChI=1S/C6H12O6/c7-1-3(9)5(11)6(12)4(10)2-8/h3,5-9,11-12H,1-2H2/t3?,5?,6u/m1/s1
 
     def enumerate_chirality(chiral_inchi_segment):
 
@@ -159,7 +157,7 @@ def inchi_search(inchi=None):
         chiral_options = ['']
         replace_from = 'DO NOT REPLACE'
 
-    format = request.args.get('format', 'html')
+    request_format = request.args.get('format', 'html')
 
     # Have to query multiple times or postgres doesn't realize it can use the index - so weird
     cur = get_postgres_connection(dictionary_cursor=True)[1]
@@ -169,7 +167,7 @@ def inchi_search(inchi=None):
         cur.execute(sql, [inchi.replace(replace_from, chiral_chunk)])
         result = cur.fetchone()
         if result:
-            if format == 'json':
+            if request_format == 'json':
                 results.append(dict(result))
             else:
                 results.append(result)
@@ -203,7 +201,7 @@ def name_search():
 
     term = request.args.get('term', "")
     if term:
-        results = requests.get('http://alatis.nmrfam.wisc.edu/search/inchi', params={'term': term}).json()
+        results = requests.get('http://alatis.nmrbox.org/search/inchi', params={'term': term}).json()
     else:
         results = None
     var_dict = {'title': term, 'results': results, 'active': 'name'}

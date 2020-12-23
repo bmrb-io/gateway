@@ -1,6 +1,3 @@
 #!/bin/bash
-python -m virtualenv env
-source ./env/bin/activate
-pip install pip==9.0.3
-export PATH="${PATH}:/usr/pgsql-9.2/bin/"
-pip install -r requirements.txt
+python3 -m venv venv
+source ./venv/bin/activate && pip3 install -r requirements.txt
