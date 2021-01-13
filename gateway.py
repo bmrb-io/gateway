@@ -201,7 +201,7 @@ def name_search():
 
     term = request.args.get('term', "")
     if term:
-        results = requests.get('http://alatis.nmrbox.org/search/inchi', params={'term': term}).json()
+        results = requests.get('https://alatis.bmrb.io/search/inchi', params={'term': term}).json()
     else:
         results = None
     var_dict = {'title': term, 'results': results, 'active': 'name'}
