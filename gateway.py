@@ -228,10 +228,10 @@ SELECT inchi FROM bmod.bmod_index
 UNION
 SELECT inchi FROM alatis.compound_alatis) s 
 WHERE inchi IS NOT NULL and inchi != '' and inchi != 'FAILED';
-CREATE UNIQUE INDEX ON inchi_index_tmp (inchi);
+CREATE UNIQUE INDEX ON dci.inchi_index_tmp (inchi);
 ALTER MATERIALIZED VIEW IF EXISTS dci.inchi_index RENAME TO inchi_index_old;
 ALTER MATERIALIZED VIEW dci.inchi_index_tmp RENAME TO inchi_index;
-DROP MATERIALIZED VIEW dci.inchi_index_old CASCADE;
+DROP MATERIALIZED VIEW IF EXISTS dci.inchi_index_old CASCADE;
 
 DROP VIEW IF EXISTS dci.names CASCADE;
 CREATE VIEW dci.names AS
